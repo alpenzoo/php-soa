@@ -2,6 +2,7 @@
 
     namespace SOA;
     error_reporting(E_ALL);
+    date_default_timezone_set('America/New_York');
 
     define('ENV', 'development');
     define('PUBLIC_DIR', 'public');
@@ -97,6 +98,31 @@
     };
 
 
+    $router->onHttpError(function ($code, $router) {
+        switch ($code) {
+            case 404:
+                $router->response()->body(
+                    json_encode(["error" => '404 Not Found'])
+                );
+                break;
+            case 405:
+                $router->response()->body(
+                    json_encode(["error" => '405 Forbidden'])
+                );
+                break;
+            case 500:
+                    $router->response()->body(
+                        json_encode(["error" => '500 Internal Server Error'])
+                );
+                break;
+
+            default:
+                $router->response()->body(
+                    json_encode(["error" => 'Error code: '. $code])
+                );
+        }
+    });
+
     $routes =  [
         ['GET', '@\.(css|eot|js|json|less|jpg|bmp|png|svg|ttf|woff|woff2|md)$', $return_asset_files],
         //Index Page
@@ -104,8 +130,9 @@
         //catchall
         ['GET', '/[*:catchall]', function() { return ''; } ],
 
-        ['GET', '/api', function () {
-            return json_encode(["key" => 'Hello SOA World']); }
+        ['GET', '/api', function ($request, $response, $service, $app) {
+            $ip = $request->ip;
+            return json_encode(["key" => 'Hello SOA World: '. $ip]); }
         ],
 
     ];
