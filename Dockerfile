@@ -20,6 +20,7 @@ ADD .installer/.docker/default.conf /etc/nginx/conf.d/default.conf
 # Adding the configuration file of the Supervisor
 ADD .installer/.docker/supervisord.conf /etc/
 
+ADD composer.* /opt/
 
 ADD .installer/.docker/composer.phar /usr/local/sbin/composer
 RUN chmod +x /usr/local/sbin/composer && cd /opt/ && php /usr/local/sbin/composer install && /usr/local/sbin/composer install-bootstrap

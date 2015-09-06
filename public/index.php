@@ -1,1 +1,1 @@
-<?php require __DIR__ . '/../service.php';
+<?php require __DIR__ . '/../bootstrap.php';

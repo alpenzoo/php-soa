@@ -8,7 +8,7 @@
     define('PUBLIC_DIR', 'public');
 
     require_once __DIR__ . '/vendor/autoload.php';
-
+    require_once 'Service_Example.php';
 
 
 
@@ -97,7 +97,6 @@
 
     };
 
-
     $router->onHttpError(function ($code, $router) {
         switch ($code) {
             case 404:
@@ -127,14 +126,6 @@
         ['GET', '@\.(css|eot|js|json|less|jpg|bmp|png|svg|ttf|woff|woff2|md)$', $return_asset_files],
         //Index Page
          ['OPTIONS', null, $forbidden],
-        //catchall
-        ['GET', '/[*:catchall]', function() { return ''; } ],
-
-        ['GET', '/api', function ($request, $response, $service, $app) {
-            $ip = $request->ip;
-            return json_encode(["key" => 'Hello SOA World: '. $ip]); }
-        ],
-
     ];
 
     if (gettype($routes) == 'array') {
@@ -147,5 +138,21 @@
       }
     }
 
+    if (is_file('service_api.php')) {
+
+        $custom_routes = include('service_api.php');
+        if (gettype($custom_routes) == 'array') {
+          foreach ($custom_routes as $route) {
+                  $router->respond($route[0], $route[1], $route[2]);
+          }
+        }
+    }
+
+    $router->onError(function ($klein, $msg, $type, \Exception $err){
+        $klein->response()->body(
+                json_encode(["error" => $err->getTrace()[0]])
+        );
+        $klein->response()->code(503)->send();
+    });
 
     $router->dispatch();
