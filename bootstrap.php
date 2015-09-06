@@ -1,11 +1,12 @@
-<?php /*** Bootstrap file ***/
-
+<?php
     namespace SOA;
+
     error_reporting(E_ALL);
     date_default_timezone_set('America/New_York');
 
     define('ENV', 'development');
     define('PUBLIC_DIR', 'public');
+    define('CUSTOM_ROUTES_FILE', __DIR__ . '/service_api.php');
 
     require_once __DIR__ . '/vendor/autoload.php';
     require_once 'Service_Example.php';
@@ -138,15 +139,15 @@
       }
     }
 
-    if (is_file('service_api.php')) {
+    if (is_file(CUSTOM_ROUTES_FILE)) {
+        $custom_routes = include(CUSTOM_ROUTES_FILE);
 
-        $custom_routes = include('service_api.php');
         if (gettype($custom_routes) == 'array') {
           foreach ($custom_routes as $route) {
                   $router->respond($route[0], $route[1], $route[2]);
           }
         }
-    }
+    } 
 
     $router->onError(function ($klein, $msg, $type, \Exception $err){
         $klein->response()->body(
