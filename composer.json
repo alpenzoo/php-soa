@@ -8,8 +8,8 @@
 
     "autoload": {
         "psr-4": {
-            "Main\\": "src/",
-            "Tasks\\" : "."
+            "Tasks\\" : ".",
+            "SOA\\" : "."
 
         }
     },
