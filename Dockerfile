@@ -22,6 +22,7 @@ ADD .installer/.docker/supervisord.conf /etc/
 
 #Add project
 #ADD . /var/
+#ADD . /opt/
 ADD composer.* /opt/
 
 
